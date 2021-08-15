@@ -59,7 +59,7 @@ function getUsers(pagination) {
             if (response.data.length > 0) {
                 document.getElementById('results').classList.remove('d-none');
                 document.getElementById('total').innerHTML = response.totalRows;
-                document.getElementById('from-to').innerHTML = (((parseInt(pagination) -1)*window.noOfRows)+1) +" - "+ (((parseInt(pagination) -1)*window.noOfRows)+window.noOfRows);
+                document.getElementById('from-to').innerHTML = (((parseInt(pagination) -1)*window.noOfRows)+1) +" - "+ (((parseInt(pagination) -1)*window.noOfRows)+response.data.length);
                 window.totalRows = response.totalRows;
 
                 for (var i = 0; i< response.data.length; i++) {
@@ -136,7 +136,8 @@ function getPaginationBar(currentPage) {
     unOrderedList.appendChild(page2)
 
     let pages = [];
-    const noOfButtons = ((window.totalRows / window.noOfRows)+1 < 3) ? 2 : 3;
+    const noOfPages = Math.floor(window.totalRows / window.noOfRows);
+    const noOfButtons = ((noOfPages+1) < 3) ? 2 : 3;
     
     if (currentPage == 1) {
         page1.classList.add('active');
@@ -144,7 +145,7 @@ function getPaginationBar(currentPage) {
         pages = (noOfButtons == 2) ? [1, 2] : [1, 2, 3];
         prevArrow.classList.add('disabled')
 
-    } else if ((currentPage == (window.totalRows / window.noOfRows)+1) && (noOfButtons == 3)) {
+    } else if ((currentPage == noOfPages+1) && (noOfButtons == 3)) {
         page3.classList.add('active');
         page3.setAttribute('aria-current', 'page')
         pages = [currentPage-2, currentPage-1, currentPage];
@@ -182,7 +183,7 @@ function goToPreviousPage() {
 }
 
 function goToNextPage() {
-    if (window.pagination+1 <= ((window.totalRows/window.noOfRows)+1) ) {
+    if (window.pagination+1 <= (Math.floor(window.totalRows/window.noOfRows)+1) ) {
         window.pagination = window.pagination + 1;
         getUsers(window.pagination)
     }
